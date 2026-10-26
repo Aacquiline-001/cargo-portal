@@ -1,0 +1,75 @@
+<!-- popups shared by both tabs -->
+<p-toast />
+<p-confirmdialog />
+
+<!-- ================= TOP BAR ================= -->
+<header class="top-bar glass">
+  <div class="brand-row">
+    <span class="brand-mark">CP</span>
+    <span class="brand-name">Cargo Portal</span>
+  </div>
+
+  <div class="user-area">
+    <p-button [icon]="themeService.isDark() ? 'pi pi-sun' : 'pi pi-moon'"
+              [rounded]="true" [text]="true" severity="secondary"
+              [ariaLabel]="themeService.isDark() ? 'Switch to light mode' : 'Switch to dark mode'"
+              (onClick)="themeService.toggle()" />
+    <span class="avatar" aria-hidden="true">{{ initials }}</span>
+    <span class="user-name">{{ username }}</span>
+    <p-button icon="pi pi-sign-out" [rounded]="true" [text]="true" severity="secondary"
+              ariaLabel="Sign out" (onClick)="onLogout()" />
+  </div>
+</header>
+
+<!-- ================= PAGE ================= -->
+<main class="page">
+  <div class="page-title rise-in">
+    <h1>User management</h1>
+    <p>Add, edit and remove the admins and agent users who can sign in to the portal.</p>
+  </div>
+
+  <!-- summary cards -->
+  <div class="stats">
+    <div class="stat glass rise-in" style="animation-delay: 0.05s">
+      <i class="pi pi-id-card"></i>
+      <div>
+        <b>{{ adminCount() }}</b>
+        <span>Admins</span>
+      </div>
+    </div>
+    <div class="stat glass rise-in" style="animation-delay: 0.1s">
+      <i class="pi pi-briefcase"></i>
+      <div>
+        <b>{{ agentCount() }}</b>
+        <span>Agent users</span>
+      </div>
+    </div>
+    <div class="stat glass rise-in" style="animation-delay: 0.15s">
+      <i class="pi pi-ban"></i>
+      <div>
+        <b>{{ inactiveCount() }}</b>
+        <span>Inactive accounts</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- tabs on a glass panel -->
+  <section class="panel glass rise-in" style="animation-delay: 0.2s">
+    <p-tabs value="admin">
+      <p-tablist>
+        <p-tab value="admin"><i class="pi pi-id-card"></i> Admins</p-tab>
+        <p-tab value="agent"><i class="pi pi-briefcase"></i> Agent users</p-tab>
+      </p-tablist>
+
+      <p-tabpanels>
+        <p-tabpanel value="admin">
+          <app-admin-tab (changed)="loadAdminStats()" />
+        </p-tabpanel>
+
+        <p-tabpanel value="agent">
+          <app-agent-tab (changed)="loadAgentStats()" />
+        </p-tabpanel>
+      </p-tabpanels>
+    </p-tabs>
+  </section>
+</main>

@@ -1,0 +1,137 @@
+<!-- ================= SEARCH BAR ================= -->
+<div class="search-bar">
+  <div class="field">
+    <label for="sAdminId">Admin Id</label>
+    <input pInputText id="sAdminId" [(ngModel)]="searchAdminId" (keyup.enter)="loadAdmins()" />
+  </div>
+  <div class="field">
+    <label for="sRegion">Region</label>
+    <input pInputText id="sRegion" [(ngModel)]="searchRegion" (keyup.enter)="loadAdmins()" />
+  </div>
+  <div class="field">
+    <label for="sEmpNo">Emp No</label>
+    <input pInputText id="sEmpNo" [(ngModel)]="searchEmpNo" (keyup.enter)="loadAdmins()" />
+  </div>
+
+  <p-button label="Search" icon="pi pi-search" (onClick)="loadAdmins()" />
+  <p-button label="Clear" severity="secondary" [text]="true" (onClick)="clearSearch()" />
+
+  <span class="spacer"></span>
+  <p-button label="Add Admin" icon="pi pi-plus" [outlined]="true" (onClick)="openAdd()" />
+</div>
+
+<!-- ================= TABLE ================= -->
+<p-table [value]="admins()" [loading]="loading()" [paginator]="true" [rows]="5"
+         [tableStyle]="{ 'min-width': '60rem' }">
+
+  <ng-template #header>
+    <tr>
+      <th>Admin ID</th>
+      <th>Admin Name</th>
+      <th>Emp No</th>
+      <th>Language</th>
+      <th>Email Id</th>
+      <th>Region</th>
+      <th>Branch</th>
+      <th>Status</th>
+      <th></th>
+    </tr>
+  </ng-template>
+
+  <ng-template #body let-admin>
+    <tr>
+      <td>{{ admin.adminId }}</td>
+      <td>{{ admin.adminName }}</td>
+      <td>{{ admin.employeeNumber }}</td>
+      <td>{{ admin.language }}</td>
+      <td>{{ admin.emailId }}</td>
+      <td>{{ admin.region }}</td>
+      <td>{{ admin.branch }}</td>
+      <td>
+        <p-tag [value]="admin.active ? 'Active' : 'Inactive'"
+               [severity]="admin.active ? 'success' : 'secondary'" />
+      </td>
+      <td class="actions">
+        <p-button icon="pi pi-pencil" [rounded]="true" [text]="true" (onClick)="openEdit(admin)" />
+        <p-button icon="pi pi-trash" [rounded]="true" [text]="true" severity="danger" (onClick)="confirmDelete(admin)" />
+      </td>
+    </tr>
+  </ng-template>
+
+  <ng-template #emptymessage>
+    <tr>
+      <td colspan="9">No admins found.</td>
+    </tr>
+  </ng-template>
+</p-table>
+
+<!-- ================= ADD / EDIT POPUP ================= -->
+<p-dialog [header]="editingPk === null ? 'Add Admin' : 'Edit Admin'"
+          [visible]="dialogVisible()" (visibleChange)="dialogVisible.set($event)"
+          [modal]="true" [style]="{ width: '50rem' }" [breakpoints]="{ '768px': '95vw' }">
+
+  <form #adminForm="ngForm" (ngSubmit)="save(adminForm)">
+    <div class="form-grid">
+
+      <div class="field">
+        <label for="adminId">Admin ID *</label>
+        <input pInputText id="adminId" name="adminId" [(ngModel)]="form.adminId" required #adminId="ngModel" />
+        @if (adminId.invalid && adminId.touched) { <small class="error">Admin ID is required</small> }
+      </div>
+
+      <div class="field">
+        <label for="adminName">Admin Name *</label>
+        <input pInputText id="adminName" name="adminName" [(ngModel)]="form.adminName" required #adminName="ngModel" />
+        @if (adminName.invalid && adminName.touched) { <small class="error">Admin name is required</small> }
+      </div>
+
+      <div class="field">
+        <label for="employeeNumber">Employee Number *</label>
+        <input pInputText id="employeeNumber" name="employeeNumber" [(ngModel)]="form.employeeNumber" required #empNo="ngModel" />
+        @if (empNo.invalid && empNo.touched) { <small class="error">Employee number is required</small> }
+      </div>
+
+      <div class="field">
+        <label for="language">Language *</label>
+        <p-select inputId="language" name="language" [options]="languages" [(ngModel)]="form.language"
+                  placeholder="Select a language" required #language="ngModel" />
+        @if (language.invalid && language.touched) { <small class="error">Language is required</small> }
+      </div>
+
+      <div class="field">
+        <label for="emailId">Email ID *</label>
+        <input pInputText id="emailId" name="emailId" [(ngModel)]="form.emailId" required email #email="ngModel" />
+        @if (email.invalid && email.touched) { <small class="error">A valid email is required</small> }
+      </div>
+
+      <div class="field">
+        <label for="region">Region *</label>
+        <p-select inputId="region" name="region" [options]="regions" [(ngModel)]="form.region"
+                  placeholder="Select a region" required #region="ngModel" />
+        @if (region.invalid && region.touched) { <small class="error">Region is required</small> }
+      </div>
+
+      <div class="field">
+        <label for="branch">Branch *</label>
+        <p-select inputId="branch" name="branch" [options]="branches" [(ngModel)]="form.branch"
+                  placeholder="Select a branch" required #branch="ngModel" />
+        @if (branch.invalid && branch.touched) { <small class="error">Branch is required</small> }
+      </div>
+
+      <div class="field">
+        <label for="contactNumber">Contact Number</label>
+        <input pInputText id="contactNumber" name="contactNumber" [(ngModel)]="form.contactNumber" />
+      </div>
+
+      <div class="field checkbox-field">
+        <p-checkbox inputId="active" name="active" [(ngModel)]="form.active" [binary]="true" />
+        <label for="active">Activate</label>
+      </div>
+    </div>
+
+    <div class="dialog-buttons">
+      <p-button type="button" label="Cancel" severity="secondary" [outlined]="true" (onClick)="dialogVisible.set(false)" />
+      <p-button type="submit" [label]="editingPk === null ? 'Add Admin' : 'Update'" [loading]="saving()" />
+    </div>
+  </form>
+</p-dialog>

@@ -1,0 +1,148 @@
+<!-- ================= SEARCH BAR ================= -->
+<div class="search-bar">
+  <div class="field">
+    <label for="sLoginId">Agent Id</label>
+    <input pInputText id="sLoginId" [(ngModel)]="searchLoginId" (keyup.enter)="loadAgents()" />
+  </div>
+  <div class="field">
+    <label for="sPrivilege">Privilege</label>
+    <input pInputText id="sPrivilege" [(ngModel)]="searchPrivilege" (keyup.enter)="loadAgents()" />
+  </div>
+  <div class="field">
+    <label for="sAgentCode">Agent code</label>
+    <input pInputText id="sAgentCode" [(ngModel)]="searchAgentCode" (keyup.enter)="loadAgents()" />
+  </div>
+
+  <p-button label="Search" icon="pi pi-search" (onClick)="loadAgents()" />
+  <p-button label="Clear" severity="secondary" [text]="true" (onClick)="clearSearch()" />
+
+  <span class="spacer"></span>
+  <p-button label="Add Agent User" icon="pi pi-plus" [outlined]="true" (onClick)="openAdd()" />
+</div>
+
+<!-- ================= TABLE ================= -->
+<p-table [value]="agents()" [loading]="loading()" [paginator]="true" [rows]="5"
+         [tableStyle]="{ 'min-width': '70rem' }">
+
+  <ng-template #header>
+    <tr>
+      <th>User ID</th>
+      <th>User Name</th>
+      <th>Language</th>
+      <th>Email ID</th>
+      <th>User Type</th>
+      <th>Privilege</th>
+      <th>Agent Code</th>
+      <th>Company</th>
+      <th>Status</th>
+      <th></th>
+    </tr>
+  </ng-template>
+
+  <ng-template #body let-agent>
+    <tr>
+      <td>{{ agent.loginId }}</td>
+      <td>{{ agent.userName }}</td>
+      <td>{{ agent.language }}</td>
+      <td>{{ agent.emailId }}</td>
+      <td>{{ agent.userType }}</td>
+      <td>{{ agent.privilege }}</td>
+      <td>{{ agent.agentCode }}</td>
+      <td>{{ agent.companyName }}</td>
+      <td>
+        <p-tag [value]="agent.active ? 'Active' : 'Inactive'"
+               [severity]="agent.active ? 'success' : 'secondary'" />
+      </td>
+      <td class="actions">
+        <p-button icon="pi pi-pencil" [rounded]="true" [text]="true" (onClick)="openEdit(agent)" />
+        <p-button icon="pi pi-trash" [rounded]="true" [text]="true" severity="danger" (onClick)="confirmDelete(agent)" />
+      </td>
+    </tr>
+  </ng-template>
+
+  <ng-template #emptymessage>
+    <tr>
+      <td colspan="10">No agent users found.</td>
+    </tr>
+  </ng-template>
+</p-table>
+
+<!-- ================= ADD / EDIT POPUP ================= -->
+<p-dialog [header]="editingPk === null ? 'Add User' : 'Edit User'"
+          [visible]="dialogVisible()" (visibleChange)="dialogVisible.set($event)"
+          [modal]="true" [style]="{ width: '50rem' }" [breakpoints]="{ '768px': '95vw' }">
+
+  <form #agentForm="ngForm" (ngSubmit)="save(agentForm)">
+    <div class="form-grid">
+
+      <div class="field">
+        <label for="loginId">User ID *</label>
+        <input pInputText id="loginId" name="loginId" [(ngModel)]="form.loginId" required #loginId="ngModel" />
+        @if (loginId.invalid && loginId.touched) { <small class="error">User ID is required</small> }
+      </div>
+
+      <div class="field">
+        <label for="userName">User Name *</label>
+        <input pInputText id="userName" name="userName" [(ngModel)]="form.userName" required #userName="ngModel" />
+        @if (userName.invalid && userName.touched) { <small class="error">User name is required</small> }
+      </div>
+
+      <div class="field">
+        <label for="language">Language *</label>
+        <p-select inputId="language" name="language" [options]="languages" [(ngModel)]="form.language"
+                  placeholder="Select a language" required #language="ngModel" />
+        @if (language.invalid && language.touched) { <small class="error">Language is required</small> }
+      </div>
+
+      <div class="field">
+        <label for="emailId">Email ID *</label>
+        <input pInputText id="emailId" name="emailId" [(ngModel)]="form.emailId" required email #email="ngModel" />
+        @if (email.invalid && email.touched) { <small class="error">A valid email is required</small> }
+      </div>
+
+      <div class="field">
+        <label for="userType">User Type *</label>
+        <p-select inputId="userType" name="userType" [options]="userTypes" [(ngModel)]="form.userType"
+                  placeholder="Select a user type" required #userType="ngModel" />
+        @if (userType.invalid && userType.touched) { <small class="error">User type is required</small> }
+      </div>
+
+      <div class="field">
+        <label for="privilege">Privilege</label>
+        <p-select inputId="privilege" name="privilege" [options]="privileges" [(ngModel)]="form.privilege"
+                  placeholder="Select a privilege" [showClear]="true" />
+      </div>
+
+      <div class="field">
+        <label for="agentCode">Agent Code *</label>
+        <input pInputText id="agentCode" name="agentCode" [(ngModel)]="form.agentCode" required #agentCode="ngModel" />
+        @if (agentCode.invalid && agentCode.touched) { <small class="error">Agent code is required</small> }
+      </div>
+
+      <div class="field">
+        <label for="companyName">Company Name</label>
+        <input pInputText id="companyName" name="companyName" [(ngModel)]="form.companyName" />
+      </div>
+
+      <div class="field">
+        <label for="address">Address</label>
+        <input pInputText id="address" name="address" [(ngModel)]="form.address" />
+      </div>
+
+      <div class="field">
+        <label for="telephone">Telephone</label>
+        <input pInputText id="telephone" name="telephone" [(ngModel)]="form.telephone" />
+      </div>
+
+      <div class="field checkbox-field">
+        <p-checkbox inputId="active" name="active" [(ngModel)]="form.active" [binary]="true" />
+        <label for="active">Activate</label>
+      </div>
+    </div>
+
+    <div class="dialog-buttons">
+      <p-button type="button" label="Cancel" severity="secondary" [outlined]="true" (onClick)="dialogVisible.set(false)" />
+      <p-button type="submit" [label]="editingPk === null ? 'Add Agent' : 'Update'" [loading]="saving()" />
+    </div>
+  </form>
+</p-dialog>

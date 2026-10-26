@@ -1,0 +1,72 @@
+.search-bar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  gap: 12px;
+  margin-bottom: 16px;
+}
+
+.spacer {
+  flex: 1;
+}
+
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.form-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));   /* always 3 equal columns */
+  gap: 16px;
+  align-items: start;                                  /* every field starts at the top of its row */
+  margin-bottom: 20px;
+}
+
+/* text boxes and dropdowns: same width AND same height, so rows line up */
+.form-grid input,
+.form-grid p-select {
+  width: 100%;
+  height: 40px;
+  box-sizing: border-box;
+}
+
+.form-grid p-select {
+  align-items: center;
+}
+
+/* the Activate checkbox sits level with the boxes in its row */
+.checkbox-field {
+  flex-direction: row;
+  align-items: center;
+  align-self: end;
+  height: 40px;
+}
+
+/* smaller screens: 2 columns, then 1 */
+@media (max-width: 768px) {
+  .form-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 520px) {
+  .form-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+.error {
+  color: #dc2626;
+}
+
+.actions {
+  white-space: nowrap;
+}
+
+.dialog-buttons {
+  display: flex;
+  justify-content: flex-end;
+  gap: 8px;
+}

@@ -1,0 +1,43 @@
+<div class="login-page">
+
+  <!-- light / dark switch, top right -->
+  <p-button [icon]="themeService.isDark() ? 'pi pi-sun' : 'pi pi-moon'"
+            [rounded]="true" [text]="true" severity="secondary" styleClass="theme-toggle"
+            [ariaLabel]="themeService.isDark() ? 'Switch to light mode' : 'Switch to dark mode'"
+            (onClick)="themeService.toggle()" />
+
+  <form (ngSubmit)="onLogin()" class="login-card glass rise-in">
+
+    <div class="brand-row">
+      <span class="brand-mark">CP</span>
+      <span class="brand-name">Cargo Portal</span>
+    </div>
+
+    <div>
+      <h1>Sign in</h1>
+      <p class="hint">Business admin access for user management.</p>
+    </div>
+
+    <div class="field">
+      <label for="username">Admin ID</label>
+      <input pInputText id="username" name="username" [(ngModel)]="username"
+             placeholder="e.g. ADMIN001" autocomplete="username" />
+    </div>
+
+        <div class="field">
+      <div class="label-row">
+        <label for="password">Password</label>
+        <a routerLink="/forgot-password" class="forgot-link">Forgot password?</a>
+      </div>
+      <p-password inputId="password" name="password" [(ngModel)]="password"
+                  [feedback]="false" [toggleMask]="true" />
+    </div>
+
+    @if (errorMessage()) {
+      <p-message severity="error">{{ errorMessage() }}</p-message>
+    }
+
+    <p-button type="submit" label="Sign in" [loading]="loading()" styleClass="login-button" />
+  </form>
+
+</div>
